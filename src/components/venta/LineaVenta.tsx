@@ -1,4 +1,4 @@
-import { ExtendItemSale, ItemSale } from '@/interfaces/sale.interface'
+import { ExtendItemSale } from '@/interfaces/sale.interface'
 import { useAppDispatch, useAppSelector } from '@/redux/hook'
 import { deleteItemSale, downQTY10Sale, downQTYSale, getItemSale, upQTY10Sale, upQTYSale } from '@/redux/saleSlice'
 import React, { useState } from 'react'

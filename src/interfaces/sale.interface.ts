@@ -1,29 +1,31 @@
 import { ObjectId, Types } from 'mongoose'
 
 export interface Sale {
-  _id: Types.ObjectId
-  user: Types.ObjectId
-  cliente: Types.ObjectId
-  estado: EstadoVenta
-  nameCliente: string
+  _id?: Types.ObjectId | string
+  user?: Types.ObjectId | string
+  cliente: Types.ObjectId | string
+  estado: "PENDIENTE" | "COMPLETADA" | "CANCELADA"
+  nameCliente?: string
   total: number
-  createdAt: string
+  createdAt?: string
   itemsSale: ItemSale[]
 }
 
-export enum EstadoVenta {
-  PENDIENTE = 'PENDIENTE',
-  COMPLETADA = 'COMPLETADA', 
-  CANCELADA = 'CANCELADA'
-}
 
 
 export interface ItemSale {
-  _id?: Types.ObjectId
-  idVenta: Types.ObjectId
-  idProducto: Types.ObjectId
+  _id?: Types.ObjectId | string
+  idVenta?: Types.ObjectId | string
+  idProducto: Types.ObjectId | string
   cantidad: number
   total: number
   precio: number
   name?: string
+}
+
+export interface ExtendItemSale extends ItemSale {
+  descripcion?: string
+  NameCategoria?: string
+  precioUnitario?: number
+  precioDescuento?: number
 }

@@ -9,10 +9,9 @@ const initialState: Sale = {
   _id: '',
   cliente: '',
   createdAt: '',
-  estado: '',
+  estado: 'COMPLETADA',
   itemsSale: [],
   total: 0,
-  porcentaje: 0
 };
 
 const saleSlice = createSlice({
@@ -26,8 +25,7 @@ const saleSlice = createSlice({
       state.createdAt= saleData.createdAt,
       state.estado= saleData.estado,
       state.itemsSale= saleData.itemsSale,
-      state.total= saleData.total,
-      state.porcentaje= saleData.porcentaje
+      state.total= saleData.total
     },
     addItemSale: (state, action: PayloadAction<{ item: Product }>) => {
         const item = action.payload.item
@@ -111,10 +109,9 @@ const saleSlice = createSlice({
     resetSale: (state, action) => {
       state.cliente= '',
       state.createdAt= '',
-      state.estado= '',
+      state.estado= 'COMPLETADA',
       state.itemsSale= [],
-      state.total= 0,
-      state.porcentaje= 0
+      state.total= 0
     }
   },
 });

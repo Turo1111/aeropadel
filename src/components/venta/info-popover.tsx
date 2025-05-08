@@ -15,6 +15,7 @@ const PopoverContainer = styled.div`
   max-height: 400px;
   overflow-y: auto;
   z-index: 50;
+  border: 2px solid red; /* Temporary border for debugging */
 `
 
 const PopoverHeader = styled.div`
@@ -92,21 +93,31 @@ export default function InfoPopover({ anchorEl, onClose, saleId }: InfoPopoverPr
       const anchorRect = anchorEl.getBoundingClientRect()
       const popoverRect = popoverRef.current.getBoundingClientRect()
 
+      console.log('Anchor Rect:', anchorRect)
+      console.log('Popover Rect:', popoverRect)
+      console.log('Window Width:', window.innerWidth)
+
       // Position to the right of the anchor by default
       let left = anchorRect.right - 46
       let top = anchorRect.top
+
+      console.log('Initial Left Position:', left)
 
       // Check if popover would go off the right edge of the screen
       if (left + popoverRect.width > window.innerWidth) {
         // Position to the left of the anchor instead
         left = anchorRect.left - popoverRect.width + 46
+        console.log('Adjusted Left Position:', left)
       }
 
       // Check if popover would go off the bottom of the screen
       if (top + popoverRect.height > window.innerHeight) {
         // Adjust top position to fit within screen
         top = Math.max(8, window.innerHeight - popoverRect.height - 8)
+        console.log('Adjusted Top Position:', top)
       }
+
+      console.log('Final Position:', { left, top })
 
       popoverRef.current.style.left = `${left}px`
       popoverRef.current.style.top = `${top}px`

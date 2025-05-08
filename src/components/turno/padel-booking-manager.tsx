@@ -295,7 +295,7 @@ const generateSampleTurnos = (selectedDate: Date): Turno[] => {
 }
 
 export default function PadelBookingManager() {
-  const [locales, setLocales] = useState<Local[]>(sampleLocales)
+  /* const [locales, setLocales] = useState<Local[]>(sampleLocales)
   const [canchas, setCanchas] = useState<Cancha[]>(sampleCanchas)
   const [selectedLocalId, setSelectedLocalId] = useState<string>(sampleLocales[0]._id)
   const [selectedCanchaId, setSelectedCanchaId] = useState<string>("")
@@ -366,6 +366,7 @@ export default function PadelBookingManager() {
       }
       return t
     })
+    
     setTurnos(updatedTurnos)
     setIsBookingModalOpen(false)
   }
@@ -385,11 +386,11 @@ export default function PadelBookingManager() {
     sunday.setDate(monday.getDate() + 6)
     const sundayStr = sunday.toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })
     return `${mondayStr} - ${sundayStr}`
-  }
+  } */
 
   return (
     <Container>
-      <Header>
+      {/* <Header>
         <Title>Administración de Turnos</Title>
       </Header>
 
@@ -420,23 +421,23 @@ export default function PadelBookingManager() {
       </DatePickerContainer>
 
       {/* Selector de canchas */}
-      <CourtSelector
+      {/* <CourtSelector
         canchas={filteredCanchas}
         selectedCanchaId={selectedCanchaId}
         onSelectCancha={handleCanchaSelect}
-      />
+      /> */}
 
       {/* Vista semanal */}
-      {selectedCanchaId && (
+      {/* {selectedCanchaId && (
         <WeeklySchedule
           turnos={turnos.filter((turno) => turno.canchaId === selectedCanchaId)}
           onTurnoClick={handleTurnoClick}
           selectedDate={monday}
         />
-      )}
+      )} */}
 
       {/* Modals */}
-      <LocalModal isOpen={isLocalModalOpen} onClose={() => setIsLocalModalOpen(false)} onSave={handleAddLocal} />
+      {/* <LocalModal isOpen={isLocalModalOpen} onClose={() => setIsLocalModalOpen(false)} onSave={handleAddLocal} />
 
       <CanchaModal isOpen={isCanchaModalOpen} onClose={() => setIsCanchaModalOpen(false)} onSave={handleAddCancha} />
 
@@ -447,7 +448,7 @@ export default function PadelBookingManager() {
           turno={selectedTurno}
           onConfirm={handleBookingConfirm}
         />
-      )}
+      )} */}
     </Container>
   )
 }

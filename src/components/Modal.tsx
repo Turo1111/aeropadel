@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react"
 import { AiOutlineClose } from "react-icons/ai"
 import styled, { css, keyframes } from "styled-components"
-import { CSSTransition } from "react-transition-group"
 import useOutsideClick from "@/hooks/useOutsideClick"
 
 const Modal = ({

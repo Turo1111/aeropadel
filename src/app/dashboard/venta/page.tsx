@@ -159,16 +159,20 @@ export default function VentaPage() {
     }
   }
 
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(()=>{
     if ( search !== '') {
       console.log('search', search)
       getSaleSearch(search)
     }
   },[search]) 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(()=>{
     getSale(query.skip, query.limit)
   },[query])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
 
   useEffect(()=>{
@@ -185,6 +189,7 @@ export default function VentaPage() {
       socket.disconnect();
     }; 
   },[data])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
     
   const lastElementRef = useCallback(
     (node: HTMLLIElement | null) => {
@@ -240,6 +245,9 @@ export default function VentaPage() {
                search !== '' ?
                 dataSearch.length !== 0 ?
                 dataSearch.map((item:Sale, index:number)=>{
+                  if (!item._id || !item.nameCliente) {
+                    return ''
+                  }
                   return  <SaleCard
                   key={item._id.toString()}
                   customer={item.nameCliente}
@@ -247,7 +255,14 @@ export default function VentaPage() {
                   total={item.total}
                   id={item._id.toString()}
                   onPrint={() => {}}
-                  onInfo={() => {setAnchorEl(document.getElementById(item._id.toString()));setSaleId(item._id.toString())} }
+                  onInfo={() => {
+                    if(!item._id){
+                      setAnchorEl(null);
+                      setSaleId(null)
+                      return
+                    }
+                    setAnchorEl(document.getElementById(item._id.toString()));setSaleId(item._id.toString())
+                  } }
                   onEdit={() => {}}
                 />
                 })
@@ -258,6 +273,9 @@ export default function VentaPage() {
               :
                 data.length !== 0 ? 
                 data.map((item:Sale, index:number)=>{
+                  if (!item._id || !item.nameCliente) {
+                    return ''
+                  }
                   return <SaleCard
                   key={item._id.toString()}
                   id={item._id.toString()}
@@ -265,7 +283,14 @@ export default function VentaPage() {
                   date={item.createdAt || 'Fecha no definida'}
                   total={item.total}
                   onPrint={() => {} }
-                  onInfo={() => {setAnchorEl(document.getElementById(item._id.toString()));setSaleId(item._id.toString())} }
+                  onInfo={() => {
+                    if(!item._id){
+                      setAnchorEl(null);
+                      setSaleId(null)
+                      return
+                    }
+                    setAnchorEl(document.getElementById(item._id.toString()));setSaleId(item._id.toString())
+                  } }
                   onEdit={() => {} }
                 />
                 })

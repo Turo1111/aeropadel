@@ -14,7 +14,7 @@ import { io } from "socket.io-client"
 import apiClient from "@/utils/client"
 import { useAppDispatch } from "@/redux/hook"
 import { setLoading } from "@/redux/loadingSlice"
-import { User } from "@/interfaces/auth.interface"
+import { Role, User } from "@/interfaces/auth.interface"
 import ListUser from "@/components/usuarios/list-user"
 import ListRoles from "@/components/usuarios/list-roles"
 // Interfaces
@@ -228,7 +228,11 @@ export default function UsuariosPage() {
       {isListUser ? (
         <ListUser search={search} setSearch={() => setSearch(prevData=>'')} handleOpenUserModal={handleOpenUserModal} handleOpenPermissionsPopover={handleOpenPermissionsPopover} />
       ) : (
-        <ListRoles search={search} setSearch={() => setSearch(prevData=>'')} />
+        <ListRoles search={search} setSearch={() => setSearch(prevData => '')} handleOpenRoleModal={function (role: Role): void {
+            throw new Error("Function not implemented.")
+          } } handleOpenPermissionsPopover={function (roleId: string, event: React.MouseEvent<HTMLButtonElement>): void {
+            throw new Error("Function not implemented.")
+          } } />
       )}
 
 

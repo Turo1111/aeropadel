@@ -28,7 +28,7 @@ export default function DataSale() {
       itemsSale: sale.itemsSale, 
       cliente: process.env.NEXT_PUBLIC_CLIENTE_DEFAULT || '681529558dadfe985a8e6147', 
       total: sale.total, 
-      estado: 'Creado', 
+      estado: "COMPLETADA", 
     }
     apiClient.post('/sale', newSale)
     .then((r)=>{
