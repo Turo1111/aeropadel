@@ -180,9 +180,6 @@ const entities = [
   { id: "product", name: "Productos" },
   { id: "sale", name: "Ventas" },
   { id: "turno", name: "Turnos" },
-  { id: "provider", name: "Proveedores" },
-  { id: "brand", name: "Marcas" },
-  { id: "category", name: "Categorías" },
 ]
 
 const actions = [
