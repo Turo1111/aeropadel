@@ -257,18 +257,22 @@ export default function UsuariosPage() {
       )}
 
       {/* User Modal */}
-      <UserModal
-        isOpen={isUserModalOpen}
-        onClose={() => setIsUserModalOpen(false)}
-        user={currentUser}
-      />
+      {isUserModalOpen && (
+        <UserModal
+          isOpen={isUserModalOpen}
+          onClose={() => setIsUserModalOpen(false)}
+          user={currentUser}
+        />
+      )}
 
       {/* Role Modal */}
-      <RoleModal 
+      {isRoleModalOpen && (
+        <RoleModal 
         isOpen={isRoleModalOpen} 
         onClose={() => setIsRoleModalOpen(false)}
-        role={currentRole}
-      />
+          role={currentRole}
+        />
+      )}
 
       {/* Permissions Popover */}
       {permissionsPopover.anchorEl && (

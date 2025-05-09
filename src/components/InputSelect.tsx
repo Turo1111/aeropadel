@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hook';
 
 import {IoIosArrowDown} from 'react-icons/io'
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { io } from 'socket.io-client';
 
 interface Item {
   _id: string;
@@ -29,6 +30,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ value, onChange, name, path, 
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const dispatch = useAppDispatch();
+  const token = process.env.NEXT_PUBLIC_TOKEN
 
   const getData = () => {
     setLoading(true);
@@ -39,6 +41,21 @@ const InputSelect: React.FC<InputSelectProps> = ({ value, onChange, name, path, 
       })
       .catch(e => console.log(e));
   };
+
+  useEffect(()=>{
+    setLoading(true)
+    apiClient.get(`/${path}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}` // Agregar el token en el encabezado como "Bearer {token}"
+      }
+    })
+    .then((r)=>{
+      setLoading(false)
+      setData(r.data) 
+    })
+    .catch(e=>console.log('error', e))
+  },[token])
 
   const addValue = (item: Item) => {
     onChange(item._id, item);
@@ -69,10 +86,6 @@ const InputSelect: React.FC<InputSelectProps> = ({ value, onChange, name, path, 
     setInputValue(event.target.value);
   };
 
-  useEffect(() => {
-    getData();
-  }, [path]);
-
   useEffect(()=>{
     if (value === '' || value === undefined) {
       setInputValue('')
@@ -90,6 +103,27 @@ const InputSelect: React.FC<InputSelectProps> = ({ value, onChange, name, path, 
       setOpen(false);
     }
   }, [inputValue]);
+
+  useEffect(()=>{
+    const socket = io(process.env.NEXT_PUBLIC_DB_HOST || 'http://localhost:5000')
+    socket.on(`${path}`, (socket: any) => {
+      setData((prevData: any[])=>{
+        if (!Array.isArray(prevData)) {
+          return [socket.data]
+        }
+        const exist = prevData.find((elem: any) => elem._id === socket.data._id )
+        if (exist) {
+          return prevData.map((item: any) =>
+            item._id === socket.data._id ? socket.data : item
+          )
+        }
+        return [...prevData, socket.data]
+      }) 
+    })
+    return () => {
+      socket.disconnect();
+    }; 
+  },[data]) 
 
   return (
     <Container>
