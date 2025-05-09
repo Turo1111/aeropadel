@@ -18,7 +18,7 @@ export default function Inicio() {
     {
       name: "Usuarios",
       icon: <FaUsers size={24} />,
-      path: "/dashboard/usuarios",
+      path: "/dashboard/usuario",
       permission: "read_user"
     },
     {
