@@ -66,7 +66,7 @@ export default function Home() {
     <Main>
       <ContainerLogin>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 20}}>
-          <Image src="/LOGO2.PNG" alt="Aeropadel Logo" width={300} height={100} />
+          <Image src="/LOGO2.png" alt="Aeropadel Logo" width={300} height={100} />
         </div>
         <div>
           <Input label={'Usuario'} name={'nickname'} value={formik.values.nickname} onChange={formik.handleChange} type='text' />
