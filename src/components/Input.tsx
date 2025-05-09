@@ -1,7 +1,6 @@
-
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 type TypeInput = 'text' | 'number' | 'email' | 'date' | 'password';
 
@@ -41,7 +40,26 @@ const Prefix = styled.div`
   align-items: center;
 `;
 
-const InputField = styled.input<{ $focused?: boolean; $hasPrefix?: boolean; }>`
+const PasswordToggle = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #716A6A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  
+  &:hover {
+    color: #7286D3;
+  }
+`;
+
+const InputField = styled.input<{ $focused?: boolean; $hasPrefix?: boolean; $hasPasswordToggle?: boolean; }>`
   height: 35px;
   padding: 5px 10px;
   font-size: 16px;
@@ -50,6 +68,7 @@ const InputField = styled.input<{ $focused?: boolean; $hasPrefix?: boolean; }>`
   border: ${({ $focused }) => ($focused ? '2px solid #7286D3' : '1px solid #d9d9d9')};
   transition: border-color 0.2s ease-in-out;
   padding-left: ${({ $hasPrefix }) => ($hasPrefix ? '30px' : '10px')};
+  padding-right: ${({ $hasPasswordToggle }) => ($hasPasswordToggle ? '40px' : '10px')};
 
   &:focus {
     outline: none;
@@ -69,6 +88,7 @@ const Input = ({ type, label, value, onChange, name, required, readOnly, prefix,
 }) => {
   const [isActive, setIsActive] = useState<boolean>(type === 'date' ? true : false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleInputFocus = () => {
     setIsActive(true);
@@ -78,6 +98,10 @@ const Input = ({ type, label, value, onChange, name, required, readOnly, prefix,
   const handleInputBlur = () => {
     setIsActive(value !== '');
     setIsFocused(false);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   useEffect(() => {
@@ -100,7 +124,7 @@ const Input = ({ type, label, value, onChange, name, required, readOnly, prefix,
       <InputField
         color={process.env.TEXT_COLOR}
         name={name}
-        type={type}
+        type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
         value={value}
         onChange={onChange}
         onFocus={handleInputFocus}
@@ -108,7 +132,17 @@ const Input = ({ type, label, value, onChange, name, required, readOnly, prefix,
         $focused={isFocused}
         readOnly={readOnly}
         $hasPrefix={prefix !== ''}
+        $hasPasswordToggle={type === 'password'}
       />
+      {type === 'password' && (
+        <PasswordToggle 
+          type="button" 
+          onClick={togglePasswordVisibility}
+          title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+        >
+          {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+        </PasswordToggle>
+      )}
     </InputWrapper>
   );
 };
