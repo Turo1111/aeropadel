@@ -54,6 +54,7 @@ export default function Home() {
 
       if (result.error) {
         setError(result.error)
+        dispatch(setLoading(false))
       } else {
         dispatch(setLoading(false))
         router.push('/dashboard/inicio')
