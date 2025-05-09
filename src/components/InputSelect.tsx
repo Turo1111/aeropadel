@@ -34,7 +34,6 @@ const InputSelect: React.FC<InputSelectProps> = ({ value, onChange, name, path, 
     setLoading(true);
     apiClient.get(`${path}`)
       .then(response => {
-        console.log('response input select', response)
         setData(response.data);
         setLoading(false);
       })

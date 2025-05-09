@@ -145,7 +145,7 @@ export default function NewProductModal({ isOpen, onClose }: NewProductModalProp
       .catch((e)=>{
         dispatch(setLoading(false))
         dispatch(setAlert({
-        message: `${e.response.data.error}`,
+          message: `${e.response.data.error || e.response.data || 'Error al crear el producto'}`,
         type: 'error'
         }))
       })

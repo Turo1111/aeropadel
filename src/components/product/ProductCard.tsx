@@ -1,5 +1,6 @@
 "use client"
 
+import { useSession } from "next-auth/react"
 import { FaEdit, FaInfoCircle, FaPrint } from "react-icons/fa"
 import styled from "styled-components"
 
@@ -73,6 +74,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ name, category, price, stock, onEdit, onClick }: ProductCardProps) {
+  const { data: session } = useSession();
+
 
   return (
     <Card onClick={onClick} >
@@ -88,6 +91,7 @@ export default function ProductCard({ name, category, price, stock, onEdit, onCl
       </div>
       {
         onEdit &&
+        session?.user?.role?.permissions?.includes("update_product") &&
         <ActionButtons>
           <ActionButton $variant="edit" title="Editar" onClick={onEdit}>
             <FaEdit size={14} />

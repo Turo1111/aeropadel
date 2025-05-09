@@ -13,6 +13,7 @@ import { io } from 'socket.io-client';
 import { useSelector } from "react-redux"
 import EditProduct from "@/components/product/EditProduct"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 interface CBP {
   _id: (string | number) 
@@ -121,8 +122,9 @@ export default function ProductoPage() {
   const observer = useRef<IntersectionObserver | null>(null);
   const [openEdit, setOpenEdit] = useState(false)
   const [productSelected, setProductSelected] = useState<Product | undefined>(undefined)
-
+  const { data: session } = useSession();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const searchProduct = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(prevData=>e.target.value)
@@ -191,6 +193,16 @@ useEffect(()=>{
   }
 },[search, dispatch]) 
 
+useEffect(() => {
+  if (session?.user?.role?.permissions) {
+    const hasProductPermission = session.user.role.permissions.includes("read_product");
+    
+    if (!hasProductPermission) {
+      router.push('/dashboard/inicio');
+      return;
+    }
+  }
+}, [session]);
 
 useEffect(()=>{
   if (!process.env.NEXT_PUBLIC_DB_HOST) {
@@ -251,11 +263,12 @@ const lastElementRef = useCallback(
             onChange={(e) => searchProduct(e)}
           />
         </SearchContainer>
-
-        <Button onClick={() => setIsModalOpen(true)}>
-          <FaPlus size={14} />
-          Nuevo
-        </Button>
+        {session?.user?.role?.permissions?.includes("create_product") && (  
+          <Button onClick={() => setIsModalOpen(true)}>
+            <FaPlus size={14} />
+            Nuevo
+          </Button>
+        )}
       </Header>
 
       <ProductList>

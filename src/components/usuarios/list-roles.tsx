@@ -2,6 +2,7 @@ import { Role } from '@/interfaces/auth.interface';
 import { useAppDispatch } from '@/redux/hook';
 import { getLoading, setLoading } from '@/redux/loadingSlice';
 import apiClient from '@/utils/client';
+import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 import { FaEdit } from 'react-icons/fa';
@@ -19,6 +20,7 @@ export default function ListRoles({search, setSearch, handleOpenRoleModal, handl
     const {open: loading} = useSelector(getLoading)
     const observer = useRef<IntersectionObserver | null>(null);
     const dispatch = useAppDispatch();
+    const { data: session } = useSession();
     
     useEffect(() => {
         const getRole = async (skip: number, limit: number) => {
@@ -81,11 +83,8 @@ export default function ListRoles({search, setSearch, handleOpenRoleModal, handl
         }
         const socket = io(process.env.NEXT_PUBLIC_DB_HOST)
         socket.on(`role`, (socket) => {
-            console.log('socket role', socket)
             setSearch('')
-            console.log('data role', data)
             setData((prevData: Role[]) => {
-                console.log('prevData role', prevData)
                 if (prevData.length === 0) {
                     return [socket.data]
                 }
@@ -130,16 +129,20 @@ export default function ListRoles({search, setSearch, handleOpenRoleModal, handl
                 return <TableRow key={role._id}>
                 <UserName>{role.name}</UserName>
                 <ActionButtons>
-                  <ActionButton $variant="edit" title="Editar rol" onClick={() => handleOpenRoleModal(role)}>
-                    <FaEdit size={14} />
-                  </ActionButton>
-                  <ActionButton
-                    $variant="permissions"
-                    title="Ver permisos"
-                    onClick={(e) => handleOpenPermissionsPopover(role._id, e)}
+                  {session?.user?.role?.permissions?.includes("update_role") && (
+                    <ActionButton $variant="edit" title="Editar rol" onClick={() => handleOpenRoleModal(role)}>
+                      <FaEdit size={14} />
+                    </ActionButton>
+                  )}
+                  {session?.user?.role?.permissions?.includes("read_role") && (
+                    <ActionButton
+                      $variant="permissions"
+                      title="Ver permisos"
+                      onClick={(e) => handleOpenPermissionsPopover(role._id, e)}
                   >
                     <FaKey size={14} />
                   </ActionButton>
+                  )}
                 </ActionButtons>
               </TableRow>
               })
@@ -153,16 +156,20 @@ export default function ListRoles({search, setSearch, handleOpenRoleModal, handl
               return <TableRow key={role._id}>
               <UserName>{role.name}</UserName>
               <ActionButtons>
-                <ActionButton $variant="edit" title="Editar rol" onClick={() => handleOpenRoleModal(role)}>
-                  <FaEdit size={14} />
-                </ActionButton>
-                <ActionButton
+                {session?.user?.role?.permissions?.includes("update_role") && (
+                  <ActionButton $variant="edit" title="Editar rol" onClick={() => handleOpenRoleModal(role)}>
+                    <FaEdit size={14} />
+                  </ActionButton>
+                )}
+                {session?.user?.role?.permissions?.includes("read_role") && (
+                  <ActionButton
                   $variant="permissions"
                   title="Ver permisos"
                   onClick={(e) => handleOpenPermissionsPopover(role._id, e)}
                 >
-                  <FaKey size={14} />
-                </ActionButton>
+                    <FaKey size={14} />
+                  </ActionButton>
+                )}
               </ActionButtons>
             </TableRow>
             })

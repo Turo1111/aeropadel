@@ -17,7 +17,8 @@ import { setLoading } from "@/redux/loadingSlice"
 import { Role, User } from "@/interfaces/auth.interface"
 import ListUser from "@/components/usuarios/list-user"
 import ListRoles from "@/components/usuarios/list-roles"
-// Interfaces
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 // Styled Components
 const Container = styled.div`
@@ -159,7 +160,9 @@ export default function UsuariosPage() {
     anchorEl: null,
   })
   const [isListUser, setIsListUser] = useState(true)
-  
+  const { data: session } = useSession();
+  const [currentRole, setCurrentRole] = useState<Role | null>(null)
+  const router = useRouter()
 
   const handleOpenPermissionsPopover = (roleId: string, event: React.MouseEvent<HTMLButtonElement>) => {
     setPermissionsPopover({
@@ -184,6 +187,24 @@ export default function UsuariosPage() {
     }
   }
 
+  useEffect(() => {
+    if (session?.user?.role?.permissions) {
+      const hasUserPermission = session.user.role.permissions.includes("read_user");
+      const hasRolePermission = session.user.role.permissions.includes("read_role");
+      
+      if (!hasUserPermission && !hasRolePermission) {
+        router.push('/dashboard/inicio');
+        return;
+      }
+
+      // Set initial tab based on permissions
+      if (hasUserPermission && !hasRolePermission) {
+        setIsListUser(true);
+      } else if (!hasUserPermission && hasRolePermission) {
+        setIsListUser(false);
+      }
+    }
+  }, [session]);
   
 
   return (
@@ -204,14 +225,18 @@ export default function UsuariosPage() {
         </SearchContainer>
 
         <ButtonsContainer>
-          <Button onClick={() => {setIsUserModalOpen(true); setCurrentUser(null)}}>
-            <FaPlus size={14} />
-            Nuevo usuario
-          </Button>
-          <Button onClick={() => setIsRoleModalOpen(true)}>
-            <FaPlus size={14} />
-            Nuevo rol
-          </Button>
+          {session?.user?.role?.permissions?.includes("create_user") && (
+            <Button onClick={() => {setIsUserModalOpen(true); setCurrentUser(null)}}>
+              <FaPlus size={14} />
+              Nuevo usuario
+            </Button>
+          )}
+          {session?.user?.role?.permissions?.includes("create_role") && (
+            <Button onClick={() => {setIsRoleModalOpen(true); setCurrentRole(null)}}>
+              <FaPlus size={14} />
+              Nuevo rol
+            </Button>
+          )}
         </ButtonsContainer>
       </Header>
       
@@ -228,13 +253,8 @@ export default function UsuariosPage() {
       {isListUser ? (
         <ListUser search={search} setSearch={() => setSearch(prevData=>'')} handleOpenUserModal={handleOpenUserModal} handleOpenPermissionsPopover={handleOpenPermissionsPopover} />
       ) : (
-        <ListRoles search={search} setSearch={() => setSearch(prevData => '')} handleOpenRoleModal={function (role: Role): void {
-            throw new Error("Function not implemented.")
-          } } handleOpenPermissionsPopover={function (roleId: string, event: React.MouseEvent<HTMLButtonElement>): void {
-            throw new Error("Function not implemented.")
-          } } />
+        <ListRoles search={search} setSearch={() => setSearch(prevData => '')} handleOpenRoleModal={(role)=>{setIsRoleModalOpen(true); setCurrentRole(role)}} handleOpenPermissionsPopover={handleOpenPermissionsPopover} />
       )}
-
 
       {/* User Modal */}
       <UserModal
@@ -247,7 +267,7 @@ export default function UsuariosPage() {
       <RoleModal 
         isOpen={isRoleModalOpen} 
         onClose={() => setIsRoleModalOpen(false)}
-        role={null}
+        role={currentRole}
       />
 
       {/* Permissions Popover */}

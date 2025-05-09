@@ -13,6 +13,7 @@ import apiClient from "@/utils/client";
 import { useFormik } from "formik";
 import { signIn } from "next-auth/react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -38,7 +39,6 @@ export default function Home() {
     initialValues: initialValues,
     validationSchema: SignupSchema,
     onSubmit: async (formValue: Auth) => {
-      console.log('Formvalue:', formValue)
       dispatch(setLoading(true))
       const response = await signIn('credentials', {
         nickname: formValue.nickname,
@@ -51,8 +51,6 @@ export default function Home() {
         ok: response?.ok || false,
         url: response?.url || null
       }
-
-      console.log("result", result)
 
       if (result.error) {
         setError(result.error)
@@ -67,7 +65,9 @@ export default function Home() {
   return (
     <Main>
       <ContainerLogin>
-        <Title>AEROPADEL</Title>
+        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 20}}>
+          <Image src="/LOGO2.PNG" alt="Aeropadel Logo" width={300} height={100} />
+        </div>
         <div>
           <Input label={'Usuario'} name={'nickname'} value={formik.values.nickname} onChange={formik.handleChange} type='text' />
           {formik.errors.nickname && formik.touched.nickname && (
@@ -104,14 +104,19 @@ const Main = styled.main `
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  margin-top: 10%;
+  background-image: url('/FondoPadel.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
 `
 
 const ContainerLogin = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
-  min-width: 400px;
+  min-width: 300px;
+  margin-top: 10%;
 `
 
 const Title = styled.h2 `

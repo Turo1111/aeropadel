@@ -178,6 +178,8 @@ const entities = [
   { id: "user", name: "Usuarios" },
   { id: "role", name: "Roles" },
   { id: "product", name: "Productos" },
+  { id: "sale", name: "Ventas" },
+  { id: "turno", name: "Turnos" },
   { id: "provider", name: "Proveedores" },
   { id: "brand", name: "Marcas" },
   { id: "category", name: "Categorías" },
@@ -219,7 +221,7 @@ export default function RoleModal({ isOpen, onClose, role }: RoleModalProps) {
 
       dispatch(setLoading(true))
       const endpoint = role ? `/role/${role._id}` : '/role'
-      const method = role ? 'put' : 'post'
+      const method = role ? 'patch' : 'post'
 
       apiClient[method](endpoint, formValue)
       .then(async (r) => {

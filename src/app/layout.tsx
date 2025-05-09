@@ -41,8 +41,6 @@ function AppWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Si no está autenticado o no está activo y no está en login, lo mandamos al login
     if ((status === "unauthenticated" || (session?.user && !session.user.isActive)) && pathname !== "/") {
-      console.log('🔴 Usuario no autenticado o inactivo intentando acceder a:', pathname);
-      console.log('Redirigiendo a /');
       if (session?.user && !session.user.isActive) {
         signOut({ redirect: false });
       }
@@ -56,33 +54,27 @@ function AppWrapper({ children }: { children: React.ReactNode }) {
     
     // Si está autenticado y activo y trata de acceder a rutas públicas, redirigir al dashboard
     if (status === "authenticated" && session?.user?.isActive && publicRoutes.includes(pathname)) {
-      console.log('🟢 Usuario autenticado y activo intentando acceder a ruta pública:', pathname);
-      console.log('Redirigiendo a /dashboard/inicio');
       router.push("/dashboard/inicio");
     }
   }, [status, session, pathname, router]);
 
   // Si estamos en login o register, no mostramos nada adicional
   if (pathname === "/") {
-    console.log('📝 Mostrando página de login/register');
     return <>{children}</>;
   }
 
   // Si aún se está cargando la sesión, no mostramos nada
   if (status === "loading") {
-    console.log('⏳ Cargando sesión...');
     return null;
   }
 
   // Si está autenticado y activo, mostramos el contenido
   if (session?.user?.isActive) {
-    console.log('✅ Usuario autenticado y activo, mostrando contenido para:', pathname);
     return <>{children}</>;
   }
 
   // Si está autenticado pero inactivo, cerrar sesión y redirigir al login
   if (session?.user && !session.user.isActive) {
-    console.log('❌ Usuario inactivo, cerrando sesión');
     signOut({ redirect: false });
     router.push("/");
     return null;

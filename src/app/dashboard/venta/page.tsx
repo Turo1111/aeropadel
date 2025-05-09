@@ -13,7 +13,8 @@ import { useAppDispatch } from "@/redux/hook"
 import apiClient from "@/utils/client"
 import { io } from 'socket.io-client';
 import InfoPopover from "@/components/venta/info-popover"
-
+import { useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation"
 // Styled Components
 const Container = styled.div`
   padding: 16px;
@@ -117,14 +118,13 @@ export default function VentaPage() {
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [saleId, setSaleId] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const getSale = async (skip: number, limit: number) => {
     dispatch(setLoading(true))
-    console.log('skip', skip)
-    console.log('limit', limit)
     try {
       const response = await apiClient.post(`/sale/skip`, { skip, limit });
-      console.log('response', response)
       setData((prevData:Sale[]) => {
         if (prevData.length === 0) {
             return response.data.array;
@@ -132,14 +132,13 @@ export default function VentaPage() {
         const newData = response.data.array.filter((element: Sale) => {
             return prevData.findIndex((item: Sale) => item._id === element._id) === -1;
         });
-        console.log('newData', newData)
-        console.log('prevData', prevData)
         return [...prevData, ...newData];
       })
       setLongArray(prevData=>response.data.longitud)
       dispatch(setLoading(false))
     } catch (e) {
-      console.log("error getSale",e);dispatch(setLoading(false))
+      console.log("error getSale",e);
+      dispatch(setLoading(false))
     } finally {
       dispatch(setLoading(false));
     }
@@ -163,7 +162,6 @@ export default function VentaPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(()=>{
     if ( search !== '') {
-      console.log('search', search)
       getSaleSearch(search)
     }
   },[search]) 
@@ -174,6 +172,16 @@ export default function VentaPage() {
   },[query])
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (session?.user?.role?.permissions) {
+      const hasSalePermission = session.user.role.permissions.includes("read_sale");
+      
+      if (!hasSalePermission) {
+        router.push('/dashboard/inicio'); 
+        return;
+      }
+    }
+  }, [session]);
 
   useEffect(()=>{
     if (!process.env.NEXT_PUBLIC_DB_HOST) {
@@ -209,11 +217,6 @@ export default function VentaPage() {
     [loading, data, search, query]
   );
 
-  useEffect(()=>{
-    console.log(anchorEl, 'anchorEl')
-    console.log(saleId, 'saleId')
-  },[anchorEl, saleId])
-
   return (
     <Container>
       <Title>Ventas</Title>
@@ -231,12 +234,14 @@ export default function VentaPage() {
           />
         </SearchContainer>
 
-        <Link href="/dashboard/venta/nueva" passHref legacyBehavior>
-          <Button>
-            <FaPlus size={14} />
+        {session?.user?.role?.permissions?.includes("create_sale") && (
+          <Link href="/dashboard/venta/nueva" passHref legacyBehavior>
+            <Button>
+              <FaPlus size={14} />
             Nuevo
-          </Button>
-        </Link>
+            </Button>
+          </Link>
+        )}
       </Header>
       
 

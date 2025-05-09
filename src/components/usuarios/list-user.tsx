@@ -2,6 +2,7 @@ import { User } from '@/interfaces/auth.interface';
 import { useAppDispatch } from '@/redux/hook';
 import { getLoading, setLoading } from '@/redux/loadingSlice';
 import apiClient from '@/utils/client';
+import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 import { FaEdit } from 'react-icons/fa';
@@ -18,7 +19,9 @@ export default function ListUser({search, setSearch, handleOpenUserModal, handle
     const {open: loading} = useSelector(getLoading)
     const observer = useRef<IntersectionObserver | null>(null);
     const dispatch = useAppDispatch();
+    const { data: session } = useSession();
     
+
     useEffect(() => {
         const getUser = async (skip: number, limit: number) => {
             dispatch(setLoading(true))
@@ -80,19 +83,15 @@ export default function ListUser({search, setSearch, handleOpenUserModal, handle
         }
         const socket = io(process.env.NEXT_PUBLIC_DB_HOST)
         socket.on(`user`, (socket) => {
-            console.log('socket', socket)
             setSearch('')
             setData((prevData: User[]) => {
-                console.log('prevData', prevData)
                 const exist = prevData.find((elem: User) => elem._id === socket.data._id)
-                console.log('exist', exist)
                 if (exist) {
                     const newData = prevData.map((item: User) =>
                         item._id === socket.data._id ? socket.data : item
                     )
                     return newData
                 }
-                console.log('no existe', [...prevData, socket.data])
                 return [...prevData, socket.data]
             })
         })
@@ -128,16 +127,20 @@ export default function ListUser({search, setSearch, handleOpenUserModal, handle
                 <UserName>{user.nickname}</UserName>
                 <UserRole>{user.nameRole}</UserRole>
                 <ActionButtons>
-                  <ActionButton $variant="edit" title="Editar usuario" onClick={() => handleOpenUserModal(user)}>
-                    <FaEdit size={14} />
-                  </ActionButton>
-                  <ActionButton
-                    $variant="permissions"
-                    title="Ver permisos"
-                    onClick={(e) => handleOpenPermissionsPopover(user.role, e)}
+                  {session?.user?.role?.permissions?.includes("update_user") && ( 
+                    <ActionButton $variant="edit" title="Editar usuario" onClick={() => handleOpenUserModal(user)}>
+                      <FaEdit size={14} />
+                    </ActionButton>
+                  )}
+                  {session?.user?.role?.permissions?.includes("read_role") && (
+                    <ActionButton
+                      $variant="permissions"
+                      title="Ver permisos"
+                      onClick={(e) => handleOpenPermissionsPopover(user.role, e)}
                   >
                     <FaKey size={14} />
                   </ActionButton>
+                  )}
                 </ActionButtons>
               </TableRow>
               })
@@ -152,16 +155,20 @@ export default function ListUser({search, setSearch, handleOpenUserModal, handle
               <UserName>{user.nickname}</UserName>
               <UserRole>{user.nameRole}</UserRole>
               <ActionButtons>
-                <ActionButton $variant="edit" title="Editar usuario" onClick={() => handleOpenUserModal(user)}>
-                  <FaEdit size={14} />
-                </ActionButton>
-                <ActionButton
-                  $variant="permissions"
-                  title="Ver permisos"
-                  onClick={(e) => handleOpenPermissionsPopover(user.role, e)}
+                {session?.user?.role?.permissions?.includes("update_user") && (
+                  <ActionButton $variant="edit" title="Editar usuario" onClick={() => handleOpenUserModal(user)}>
+                    <FaEdit size={14} />
+                  </ActionButton>
+                )}  
+                {session?.user?.role?.permissions?.includes("read_role") && (
+                  <ActionButton
+                    $variant="permissions"
+                    title="Ver permisos"
+                    onClick={(e) => handleOpenPermissionsPopover(user.role, e)}
                 >
                   <FaKey size={14} />
                 </ActionButton>
+                )}
               </ActionButtons>
             </TableRow>
             })

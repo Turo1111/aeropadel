@@ -11,6 +11,7 @@ import { resetSale } from "@/redux/saleSlice"
 import { useRouter } from "next/navigation"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import { useAppDispatch } from "@/redux/hook"
+import { useSession } from "next-auth/react"
 
 // Styled Components
 const Container = styled.div`
@@ -65,10 +66,22 @@ export default function NuevaVentaPage() {
 
   const dispatch = useAppDispatch();
   const router: AppRouterInstance = useRouter()
-  
+  const { data: session } = useSession();
+
   useEffect(()=>{
     dispatch(resetSale({}))
   }, [router, dispatch])
+
+  useEffect(() => {
+    if (session?.user?.role?.permissions) {
+      const hasSalePermission = session.user.role.permissions.includes("create_sale");
+      
+      if (!hasSalePermission) {
+        router.push('/dashboard/inicio'); 
+        return;
+      }
+    }
+  }, [session]);
 
   return (
     <Container>

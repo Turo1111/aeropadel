@@ -139,16 +139,13 @@ const initialValues: Partial<User> = {
 
 export default function UserModal({ isOpen, onClose, user }: UserModalProps) {
 
-  console.log('user', user)
-
   const dispatch = useAppDispatch()
 
   const formik = useFormik({
     initialValues: initialValues as User,
     onSubmit: (formValue: User) => {
 
-      console.log('formValue user',formValue)
-
+      dispatch(setLoading(true))
       if (formValue.nickname === '' || (!user && formValue.password === '')) {
         dispatch(setAlert({
           message: 'Falta nickname o contraseña',
@@ -165,12 +162,8 @@ export default function UserModal({ isOpen, onClose, user }: UserModalProps) {
         return
       }
 
-      dispatch(setLoading(true))
       const endpoint = user ? `/user/${user._id}` : '/auth/register'
       const method = user ? 'patch' : 'post'
-
-      console.log('endpoint',endpoint)
-      console.log('method',method)
 
       apiClient[method](endpoint, formValue)
       .then(async (r) => {

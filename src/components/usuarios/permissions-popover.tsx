@@ -171,7 +171,6 @@ export default function PermissionsPopover({ anchorEl, onClose, roleId }: Permis
   useEffect(() => {
     const fetchRole = async () => {
       const { data } = await apiClient.get(`/role/${roleId}`)
-      console.log('response', data)
       setRole(data)
     }
     fetchRole()

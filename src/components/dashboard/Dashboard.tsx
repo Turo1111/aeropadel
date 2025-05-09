@@ -6,6 +6,7 @@ import { FaHome, FaShoppingCart, FaBox, FaShoppingBag, FaSignOutAlt, FaBars, FaT
 import styled from "styled-components"
 import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
+import Image from "next/image"
 // Styled Components
 const Container = styled.div`
   display: flex;
@@ -59,7 +60,7 @@ const Sidebar = styled.aside<{ $collapsed: boolean; $mobileOpen: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: ${(props) => (props.$collapsed ? "80px" : "256px")};
+  width: ${(props) => (props.$collapsed ? "90px" : "256px")};
   background-color: #f9f9fa;
   border-right: 1px solid #e5e7eb;
   transition: transform 0.3s ease, width 0.3s ease;
@@ -70,7 +71,7 @@ const Sidebar = styled.aside<{ $collapsed: boolean; $mobileOpen: boolean }>`
   z-index: 50;
   transform: ${(props) => (props.$mobileOpen ? "translateX(0)" : "translateX(-100%)")};
 
-  @media (min-width: 860px) {
+  @media (min-width: 768px) {
     position: relative;
     transform: translateX(0);
   }
@@ -287,8 +288,6 @@ export default function Dashboard({
   const pathname = usePathname()
   const { data: session, status } = useSession();
 
-  console.log(session)
-
   // Close sidebar when route changes on mobile
   useEffect(() => {
     setMobileOpen(false)
@@ -315,7 +314,7 @@ export default function Dashboard({
           <FaBars />
         </MobileMenuButton>
         <MobileLogo>
-          GI <MobileLogoText>demo</MobileLogoText>
+          <Image src="/LOGO2.png" alt="Logo" width={80} height={40} />
         </MobileLogo>
       </MobileHeader>
 
@@ -329,8 +328,8 @@ export default function Dashboard({
         </MobileCloseButton>
         {/* Logo */}
         <LogoContainer>
-          <LogoCircle>GI</LogoCircle>
-          {!collapsed && <LogoText>demo</LogoText>}
+          <Image src="/LOGO2.png" alt="Logo" width={80} height={40} />
+          {/* {!collapsed && <LogoText>demo</LogoText>} */}
         </LogoContainer>
 
         {/* Navigation */}

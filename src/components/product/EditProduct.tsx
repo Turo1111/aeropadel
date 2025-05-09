@@ -146,7 +146,7 @@ export default function EditProduct({ isOpen, onClose, product }: NewProductModa
       .catch((e)=>{
         dispatch(setLoading(false))
         dispatch(setAlert({
-        message: `${e.response.data.error}`,
+        message: `${e.response.data.error || e.response.data || 'Error al modificar el producto'}`,
         type: 'error'
         }))
       })
